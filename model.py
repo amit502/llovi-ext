@@ -14,14 +14,14 @@ from pydantic import BaseModel
 
 def get_model(args):
     model_name, temperature, max_new_tokens = args.model, args.temperature, args.max_new_tokens
-    if 'gpt' in model_name:
-        model = GPT(args.api_key, model_name, temperature)
-        return model
-    elif 'Llama-2' in model_name:
+    # if 'gpt' in model_name:
+    #     model = GPT(args.api_key, model_name, temperature)
+    #     return model
+    if 'Llama-2' in model_name:
         return LLaMA2(model_name, temperature, max_new_tokens)
     elif 'Llama-3' in model_name:
         return LLaMA3(model_name, temperature, max_new_tokens) 
-    elif 'deepseek' in model_name:
+    elif 'deepseek' in model_name or 'gpt' in model_name:
         return DeepSeek(model_name, temperature, max_new_tokens) 
 
 
@@ -167,9 +167,9 @@ class AnswerFormat(BaseModel):
         final_answer: Literal["A", "B", "C", "D", "E"]
 
 class DeepSeek(Model):
-    def __init__(self, api_key, model_name, temperature):
+    def __init__(self,model_name, temperature,max_new_tokens):
         super().__init__()
-        self.model_name = 'deepseek-r1:1.5b' #model_name
+        self.model_name = model_name #'deepseek-r1:1.5b' #model_name
         self.temperature = temperature
         self.client = ollama.Client(host='http://localhost:11434')
 
